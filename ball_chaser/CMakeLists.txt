@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(ball_chaser)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -54,7 +54,7 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
+add_service_files(FILES DriveToTarget.srv)
 #   FILES
 #   Service1.srv
 #   Service2.srv
@@ -68,7 +68,7 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
+generate_messages(DEPENDENCIES std_msgs)
 #   DEPENDENCIES
 #   std_msgs
 # )
@@ -115,10 +115,7 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
-)
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -134,6 +131,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/ball_chaser_node.cpp)
+add_executable(drive_bot src/drive_bot.cpp)
+add_executable(process_image src/process_image.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -199,7 +198,12 @@ include_directories(
 ## Add gtest based cpp test target and link libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_ball_chaser.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+target_link_libraries(drive_bot ${catkin_LIBRARIES})
+target_link_libraries(process_image ${catkin_LIBRARIES})
+
+add_dependencies(drive_bot ball_chaser_generate_messages_cpp)
+add_dependencies(process_image ball_chaser_generate_messages_cpp)
+ 
 # endif()
 
 ## Add folders to be run by python nosetests
